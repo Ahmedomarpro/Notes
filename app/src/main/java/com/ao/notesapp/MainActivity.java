@@ -3,7 +3,9 @@ package com.ao.notesapp;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.ao.notesapp.adapter.Note_adapter;
 import com.ao.notesapp.database.RunDatabase;
+import com.ao.notesapp.database.model.Note;
 import com.ao.notesapp.note_Add.Add_notes;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -21,14 +23,23 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.Menu;
 
+import java.util.List;
 import java.util.regex.Pattern;
+
+import static com.ao.notesapp.database.RunDatabase.getInstance;
 
 public class MainActivity extends AppCompatActivity {
 
 	private AppBarConfiguration mAppBarConfiguration;
+
+	Note_adapter adapter;
+	RecyclerView recyclerView;
+	RecyclerView.LayoutManager layoutManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
 		Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		FloatingActionButton fab = findViewById(R.id.fab);
+		recyclerView = findViewById(R.id.recyc);
+
 		fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -47,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
 			}
 		});
+
+		viewRecyclerData();
 
 
 
@@ -68,6 +83,17 @@ public class MainActivity extends AppCompatActivity {
 
 	}
 
+	private void viewRecyclerData() {
+		layoutManager = new LinearLayoutManager(this);
+		recyclerView.setLayoutManager(layoutManager);
+
+		adapter = new Note_adapter(null);
+		recyclerView.setAdapter(adapter);
+
+	}
+
+
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -80,5 +106,15 @@ public class MainActivity extends AppCompatActivity {
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 		return NavigationUI.navigateUp(navController, mAppBarConfiguration)
 				|| super.onSupportNavigateUp();
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		List<Note> notesList =  RunDatabase.getInstance(this)
+				.notesDaos()
+				.getAllNotes();
+		adapter.changeList(notesList);
 	}
 }
