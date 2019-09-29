@@ -35,6 +35,7 @@ public class Note_adapter extends RecyclerView.Adapter<Note_adapter.ViewHolder> 
 
 		holder.title.setText(note.getTitle());
 		holder.time.setText(note.getTime());
+		holder.content.setText(note.getContent());
 
 	}
 	public void  changeList(List<Note>notes){
@@ -50,12 +51,14 @@ public class Note_adapter extends RecyclerView.Adapter<Note_adapter.ViewHolder> 
 	}
 
 	public class ViewHolder extends RecyclerView.ViewHolder {
-		TextView title,time;
+		TextView title,time,content;
 
 		public ViewHolder(@NonNull View itemView) {
 			super(itemView);
 			title = itemView.findViewById(R.id.title);
 			time = itemView.findViewById(R.id.time);
+			content = itemView.findViewById(R.id.content);
+
 
 		}
 	}
