@@ -12,12 +12,18 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ao.notesapp.R;
+import com.ao.notesapp.adapter.Note_adapter;
 import com.ao.notesapp.base.BaseActivity;
 import com.ao.notesapp.database.RunDatabase;
 import com.ao.notesapp.database.model.Note;
+import com.ao.notesapp.touchHelper.SwipeToDeleteCallback;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -29,11 +35,13 @@ public class Add_notes extends BaseActivity implements View.OnClickListener {
 	protected  TextView textView4;
  	protected Button add;
 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		super.setContentView(R.layout.activity_add_notes);
 		initView();
+
 	}
 	final Date currentTime = Calendar.getInstance().getTime();
 
@@ -129,5 +137,6 @@ public class Add_notes extends BaseActivity implements View.OnClickListener {
 		add =  findViewById(R.id.button);
 		add.setOnClickListener(Add_notes.this);
 	}
+
 }
 

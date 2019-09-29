@@ -14,12 +14,14 @@ import com.ao.notesapp.database.model.Note;
 import java.util.List;
 
 public class Note_adapter extends RecyclerView.Adapter<Note_adapter.ViewHolder> {
+	List<Note> noteList;
 
 	public Note_adapter(List<Note> noteList) {
 		this.noteList = noteList;
 	}
 
-	List<Note> noteList;
+
+
 	@NonNull
 	@Override
 	public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -43,6 +45,7 @@ public class Note_adapter extends RecyclerView.Adapter<Note_adapter.ViewHolder> 
 		notifyDataSetChanged();
 	}
 
+
 	@Override
 	public int getItemCount() {
 		if (noteList != null)
@@ -62,4 +65,20 @@ public class Note_adapter extends RecyclerView.Adapter<Note_adapter.ViewHolder> 
 
 		}
 	}
+	public List<Note> getNoteDtat(){
+		return noteList;
+	}
+		public void removeItem(int position){
+		noteList.remove(position);
+		notifyItemRemoved(position);
+		}
+		public void restoreItem (Note  item , int position){
+
+			noteList.add(position, item);
+
+			notifyItemInserted(position);
+
+
+
+		}
 }

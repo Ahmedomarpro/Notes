@@ -1,17 +1,21 @@
 package com.ao.notesapp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import com.ao.notesapp.adapter.Note_adapter;
 import com.ao.notesapp.database.RunDatabase;
 import com.ao.notesapp.database.model.Note;
 import com.ao.notesapp.note_Add.Add_notes;
+import com.ao.notesapp.touchHelper.SwipeToDeleteCallback;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -23,6 +27,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 	Note_adapter adapter;
 	RecyclerView recyclerView;
 	RecyclerView.LayoutManager layoutManager;
+	CoordinatorLayout coordinatorLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 		setSupportActionBar(toolbar);
 		FloatingActionButton fab = findViewById(R.id.fab);
 		recyclerView = findViewById(R.id.recyc);
-
+		OnItemTounchHelper();
 		fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -116,5 +122,43 @@ public class MainActivity extends AppCompatActivity {
 				.notesDaos()
 				.getAllNotes();
 		adapter.changeList(notesList);
+
 	}
+
+	private void OnItemTounchHelper(){
+		coordinatorLayout = findViewById(R.id.coordinatorLayout);
+		final SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(this) {
+			@Override
+			public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+				final int position = viewHolder.getAdapterPosition();
+				final Note item = adapter.getNoteDtat().get(position);
+
+				//adapter.notifyItemRemoved(position);
+				adapter.removeItem(position);
+
+				Snackbar snackbar = Snackbar.make(coordinatorLayout, "Item was removed from the list....", Snackbar.LENGTH_LONG);
+				snackbar.setAction("UNDO", new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						adapter.restoreItem(item, position);
+						recyclerView.scrollToPosition(position);
+
+
+					}
+				});
+				snackbar.setActionTextColor(Color.YELLOW);
+				snackbar.show();
+
+			}
+
+		};
+
+		ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
+		itemTouchhelper.attachToRecyclerView(recyclerView);
+
+
+
+
+	}
+
 }
