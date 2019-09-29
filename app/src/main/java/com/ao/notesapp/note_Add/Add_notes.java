@@ -104,14 +104,15 @@ public class Add_notes extends BaseActivity implements View.OnClickListener {
 			TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
 				@Override
 				public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-					textView4.setText( hourOfDay + " : " + minute+currentTime);
+					textView4.setText( hourOfDay + " : " + minute);
 					chooseTime = 	hourOfDay + " : " + minute;
 				}
 			},hour,minute,false);
 
 			timePickerDialog.show();
-			if (chooseTime.isEmpty()){
+			if (textView4 != null){
 				//Toast.makeText(this, "Time", Toast.LENGTH_SHORT).show();
+				textView4.setText(currentTime.toString());
 				textView4.requestFocus();
 
 
