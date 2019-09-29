@@ -2,12 +2,15 @@ package com.ao.notesapp.note_Add;
 
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,6 +20,8 @@ import com.ao.notesapp.database.RunDatabase;
 import com.ao.notesapp.database.model.Note;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Timer;
 
 public class Add_notes extends BaseActivity implements View.OnClickListener {
 
@@ -30,19 +35,54 @@ public class Add_notes extends BaseActivity implements View.OnClickListener {
 		super.setContentView(R.layout.activity_add_notes);
 		initView();
 	}
+	final Date currentTime = Calendar.getInstance().getTime();
 
-	String chooseTime = "";
+	//Not Null
+	String chooseTime = currentTime.toString();
 
 	@Override
 	public void onClick(View view) {
+		String tittleS  	= textView2.getText().toString();
+		if ( tittleS.isEmpty()){
+
+			showMessage(R.string.title_add, R.string.ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+
+					dialog.dismiss();
+					//finish();
+				}
+			},true);
+			textView2.requestFocus();
+			return ;
+ 		}
+		String  contentS 	= textView3.getText().toString();
+		if (contentS.isEmpty()){
+			showMessage(R.string.con_add, R.string.ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+
+					dialog.dismiss();
+					//finish();
+				}
+			},true);
+			textView3.requestFocus();
+			return ;
+ 		}
+
+		/*Intent i = new Intent(android.provider.Settings.ACTION_DATE_SETTINGS);
+ 		startActivity(i);
+ 		*/
+		//Issues  --------------------------------------------------------------------------------
+
 
 		if (view.getId() == R.id.button) {
-			String tittleS  	= textView2.getText().toString();
-			String  contentS 	= textView3.getText().toString();
+
 			Note note = new Note(tittleS,contentS,chooseTime);
 			RunDatabase.getInstance(this)
 					.notesDaos()
 					.addNote(note);
+
 			showMessage(R.string.add, R.string.ok, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -52,6 +92,7 @@ public class Add_notes extends BaseActivity implements View.OnClickListener {
 				}
 			},false);
 
+			//return;
 
 
 		} else if (view.getId() == R.id.textView4) {
@@ -63,13 +104,18 @@ public class Add_notes extends BaseActivity implements View.OnClickListener {
 			TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
 				@Override
 				public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-					textView4.setText( hourOfDay + " : " + minute);
+					textView4.setText( hourOfDay + " : " + minute+currentTime);
 					chooseTime = 	hourOfDay + " : " + minute;
 				}
-			},hour,minute,true);
+			},hour,minute,false);
 
 			timePickerDialog.show();
+			if (chooseTime.isEmpty()){
+				//Toast.makeText(this, "Time", Toast.LENGTH_SHORT).show();
+				textView4.requestFocus();
 
+
+			}
 		}
 
 	}
