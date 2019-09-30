@@ -19,6 +19,7 @@ import com.ao.notesapp.R;
 
 public abstract class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
 
+
 	Context mContext;
 	private Paint mClearPaint;
 	private ColorDrawable mBackground;
