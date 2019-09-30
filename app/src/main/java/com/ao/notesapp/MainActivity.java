@@ -8,6 +8,7 @@ import com.ao.notesapp.adapter.Note_adapter;
 import com.ao.notesapp.database.RunDatabase;
 import com.ao.notesapp.database.model.Note;
 import com.ao.notesapp.note_Add.Add_notes;
+import com.ao.notesapp.touchHelper.ItemMoveCallback;
 import com.ao.notesapp.touchHelper.SwipeToDeleteCallback;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -34,11 +35,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.Menu;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
-import static com.ao.notesapp.database.RunDatabase.getInstance;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Note_adapter.StartDragListener {
 
 	private AppBarConfiguration mAppBarConfiguration;
 
@@ -46,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
 	RecyclerView recyclerView;
 	RecyclerView.LayoutManager layoutManager;
 	CoordinatorLayout coordinatorLayout;
+	ItemTouchHelper touchHelper;
+	   Note_adapter.StartDragListener mStartDragListener;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +93,13 @@ public class MainActivity extends AppCompatActivity {
 		layoutManager = new LinearLayoutManager(this);
 		recyclerView.setLayoutManager(layoutManager);
 
-		adapter = new Note_adapter(null);
+		adapter = new Note_adapter(null,mStartDragListener);
+
+		ItemTouchHelper.Callback callback =
+				new ItemMoveCallback(adapter);
+		touchHelper = new ItemTouchHelper(callback);
+		touchHelper.attachToRecyclerView(recyclerView);
+
 		recyclerView.setAdapter(adapter);
 
 	}
@@ -126,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
 	}
 
 	private void OnItemTounchHelper(){
+
 		coordinatorLayout = findViewById(R.id.coordinatorLayout);
 		final SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(this) {
 			@Override
@@ -152,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
 			}
 
 		};
-
 		ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeToDeleteCallback);
 		itemTouchhelper.attachToRecyclerView(recyclerView);
 
@@ -161,4 +167,10 @@ public class MainActivity extends AppCompatActivity {
 
 	}
 
+	@Override
+	public void requestDrag(RecyclerView.ViewHolder viewHolder) {
+
+		touchHelper.startDrag(viewHolder);
+
+	}
 }
