@@ -1,5 +1,6 @@
 package com.ao.notesapp.adapter;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,12 +20,18 @@ import java.util.List;
 
 public class Note_adapter extends RecyclerView.Adapter<Note_adapter.ViewHolder> implements ItemMoveCallback.ItemTouchHelperContract {
 	List<Note> noteList;
+	public final StartDragListener mStartDragListener;
 
-	private final StartDragListener mStartDragListener;
+	/*public Note_adapter(StartDragListener mStartDragListener) {
+		this.mStartDragListener = mStartDragListener;
+	}
+*/
 
 
 	public Note_adapter(List<Note> noteList, StartDragListener mStartDragListener) {
 		this.noteList = noteList;
+		//this.mStartDragListener = mStartDragListener;
+
 		this.mStartDragListener = mStartDragListener;
 	}
 
@@ -39,41 +46,43 @@ public class Note_adapter extends RecyclerView.Adapter<Note_adapter.ViewHolder> 
 
 	}
 
+
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 		Note note = noteList.get(position);
-
 		holder.title.setText(note.getTitle());
 		holder.time.setText(note.getTime());
 		holder.content.setText(note.getContent());
 
-		holder.title.setOnTouchListener(new View.OnTouchListener() {
+		holder.content.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				if (event.getAction() == MotionEvent.ACTION_DOWN){
-					mStartDragListener.requestDrag(holder);
+						mStartDragListener.requestDrag(holder);
 
 				}
-
 
 
 				return false;
 			}
 		});
 
+
+
 	}
 	public void  changeList(List<Note>notes){
 		this.noteList = notes;
 		notifyDataSetChanged();
-	}
+ 	}
 
 
 	@Override
 	public int getItemCount() {
-		if (noteList != null)
+		if (noteList == null) return  0;
 			return noteList.size();
-		else return 0;
-	}
+
+		 	}
 
 
 
@@ -128,15 +137,18 @@ public class Note_adapter extends RecyclerView.Adapter<Note_adapter.ViewHolder> 
 	public List<Note> getNoteDtat(){
 		return noteList;
 	}
-		public void removeItem(int position){
+		public List<Note> removeItem(int position){
 		noteList.remove(position);
 		notifyItemRemoved(position);
+			notifyDataSetChanged();
+		return noteList;
 		}
 		public void restoreItem (Note  item , int position){
 
 			noteList.add(position, item);
 
 			notifyItemInserted(position);
+
 		}
 
 	public interface StartDragListener {

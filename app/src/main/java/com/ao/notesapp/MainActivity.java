@@ -1,5 +1,7 @@
 package com.ao.notesapp;
 
+import android.content.ContentProvider;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -95,12 +97,16 @@ public class MainActivity extends AppCompatActivity implements Note_adapter.Star
 
 		adapter = new Note_adapter(null,mStartDragListener);
 
+
+		recyclerView.setAdapter(adapter);
+
 		ItemTouchHelper.Callback callback =
 				new ItemMoveCallback(adapter);
 		touchHelper = new ItemTouchHelper(callback);
 		touchHelper.attachToRecyclerView(recyclerView);
 
-		recyclerView.setAdapter(adapter);
+
+
 
 	}
 
@@ -128,10 +134,11 @@ public class MainActivity extends AppCompatActivity implements Note_adapter.Star
 				.notesDaos()
 				.getAllNotes();
 		adapter.changeList(notesList);
+ 	}
 
-	}
 
 	private void OnItemTounchHelper(){
+
 
 		coordinatorLayout = findViewById(R.id.coordinatorLayout);
 		final SwipeToDeleteCallback swipeToDeleteCallback = new SwipeToDeleteCallback(this) {
@@ -140,8 +147,20 @@ public class MainActivity extends AppCompatActivity implements Note_adapter.Star
 				final int position = viewHolder.getAdapterPosition();
 				final Note item = adapter.getNoteDtat().get(position);
 
+				RunDatabase.getInstance(MainActivity.this)
+						.notesDaos()
+						.deleteNote(item);
+
+
+
 				//adapter.notifyItemRemoved(position);
 				adapter.removeItem(position);
+
+
+
+
+
+
 
 				Snackbar snackbar = Snackbar.make(coordinatorLayout, "Item was removed from the list....", Snackbar.LENGTH_LONG);
 				snackbar.setAction("UNDO", new View.OnClickListener() {
@@ -165,11 +184,12 @@ public class MainActivity extends AppCompatActivity implements Note_adapter.Star
 
 
 
+
 	}
+
 
 	@Override
 	public void requestDrag(RecyclerView.ViewHolder viewHolder) {
-
 		touchHelper.startDrag(viewHolder);
 
 	}
